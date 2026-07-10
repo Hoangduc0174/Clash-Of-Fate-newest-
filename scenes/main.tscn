@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://k2grmt6dfapw"]
+
+[ext_resource type="Script" uid="uid://b4pjphbo7hxfh" path="res://scripts/main.gd" id="1_jyhfs"]
+[ext_resource type="PackedScene" uid="uid://vnhm71kk5i6n" path="res://scenes/player.tscn" id="1_o5qli"]
+[ext_resource type="PackedScene" uid="uid://ucavncrsmoxx" path="res://scenes/ui.tscn" id="2_0wfyh"]
+[ext_resource type="PackedScene" uid="uid://cy62blecu0dto" path="res://scenes/map.tscn" id="3_sugp2"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_sugp2"]
+
+[node name="Main" type="Node2D" unique_id=1754386151]
+script = ExtResource("1_jyhfs")
+
+[node name="Map" parent="." unique_id=201171101 instance=ExtResource("3_sugp2")]
+position = Vector2(302, 302)
+metadata/_edit_lock_ = true
+
+[node name="Ui" parent="." unique_id=2025830709 instance=ExtResource("2_0wfyh")]
+
+[node name="Player" parent="." unique_id=1323990448 instance=ExtResource("1_o5qli")]
+position = Vector2(120, 303)
+
+[node name="limit_left" type="StaticBody2D" parent="." unique_id=811058032]
+position = Vector2(-50, 257)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="limit_left" unique_id=1645257701]
+rotation = 1.5707964
+shape = SubResource("WorldBoundaryShape2D_sugp2")
+metadata/_edit_lock_ = true

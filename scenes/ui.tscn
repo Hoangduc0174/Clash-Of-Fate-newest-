@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://ucavncrsmoxx"]
+
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="1_nt7q6"]
+[ext_resource type="Script" uid="uid://bdhhxk0e3jcab" path="res://scripts/ui.gd" id="1_wm3ai"]
+[ext_resource type="Texture2D" uid="uid://bm30au8mjfc2f" path="res://addons/virtual_joystick/textures/joystick_base_outline.png" id="2_x4jx1"]
+[ext_resource type="Texture2D" uid="uid://bvrhvndvmgsko" path="res://assets/UI/PSX_20260707_052844.png" id="3_yev5y"]
+[ext_resource type="Texture2D" uid="uid://b7e60gsd2hkce" path="res://assets/UI/PSX_20260707_085951.png" id="4_gdt2y"]
+
+[node name="Ui" type="CanvasLayer" unique_id=2025830709]
+script = ExtResource("1_wm3ai")
+
+[node name="Touch_control" type="Control" parent="." unique_id=290419436]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="Virtual Joystick" parent="Touch_control" unique_id=1162168698 instance=ExtResource("1_nt7q6")]
+modulate = Color(1, 1, 1, 0.50980395)
+layout_mode = 1
+anchors_preset = -1
+offset_left = 80.0
+offset_top = -268.0
+offset_bottom = -59.429016
+grow_vertical = 2
+scale = Vector2(0.9, 0.9)
+metadata/_edit_use_anchors_ = true
+
+[node name="Attack_button" type="Control" parent="Touch_control" unique_id=748696249]
+modulate = Color(1, 1, 1, 0.50980395)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -232.0
+offset_top = -248.0
+offset_right = -32.0
+offset_bottom = -48.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.7, 0.7)
+metadata/_edit_use_anchors_ = true
+
+[node name="TouchScreenAttack" type="TouchScreenButton" parent="Touch_control/Attack_button" unique_id=2146486313]
+texture_normal = ExtResource("2_x4jx1")
+action = "attack"
+metadata/_edit_lock_ = true
+
+[node name="attack" type="TextureRect" parent="Touch_control/Attack_button" unique_id=1256108657]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.49800003
+anchor_top = 0.5
+anchor_right = 0.49800003
+anchor_bottom = 0.5
+offset_left = -99.6
+offset_top = -84.285675
+offset_right = 1800.4
+offset_bottom = 1587.1426
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_yev5y")
+metadata/_edit_lock_ = true
+
+[node name="ripple" type="TextureRect" parent="Touch_control/Attack_button" unique_id=1624726346]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_x4jx1")
+metadata/_edit_use_anchors_ = true
+
+[node name="Jump_button" type="Control" parent="Touch_control" unique_id=1274906187]
+modulate = Color(1, 1, 1, 0.50980395)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -402.0
+offset_top = -198.0
+offset_right = -202.0
+offset_bottom = 2.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(0.7, 0.7)
+metadata/_edit_use_anchors_ = true
+
+[node name="TouchScreenJump" type="TouchScreenButton" parent="Touch_control/Jump_button" unique_id=2059644398]
+texture_normal = ExtResource("2_x4jx1")
+action = "jump"
+metadata/_edit_lock_ = true
+
+[node name="attack" type="TextureRect" parent="Touch_control/Jump_button" unique_id=128943710]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.49100003
+anchor_top = 0.5
+anchor_right = 0.49100003
+anchor_bottom = 0.5
+offset_left = -125.342865
+offset_top = -128.57144
+offset_right = 1128.6572
+offset_bottom = 1125.4286
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("4_gdt2y")
+metadata/_edit_lock_ = true
+
+[node name="ripple" type="TextureRect" parent="Touch_control/Jump_button" unique_id=1807266679]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_x4jx1")
+
+[connection signal="pressed" from="Touch_control/Attack_button/TouchScreenAttack" to="." method="_on_touch_screen_attack_pressed"]
+[connection signal="pressed" from="Touch_control/Jump_button/TouchScreenJump" to="." method="_on_touch_screen_jump_pressed"]
