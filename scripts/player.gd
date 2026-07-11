@@ -1,5 +1,5 @@
 extends CharacterBody2D
-
+class_name Player
 
 enum State{
 	IDLE,
@@ -12,9 +12,10 @@ enum State{
 	DIE
 }
 
-@onready var animation_tree: AnimationTree = $AnimationTree
-@onready var animation_playback: AnimationNodeStateMachinePlayback = $AnimationTree["parameters/playback"]
-@onready var texture_anim: Sprite2D = $Sprite2D
+@onready var animation_tree: AnimationTree = $Visual/AnimationTree
+@onready var animation_playback: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
+@onready var visual: Node2D = $Visual
+
 
 const SPEED = 160
 const JUMP = -350
@@ -28,6 +29,12 @@ var flip_delay_time:float = 0.1
 var move_direction: Vector2 = Vector2.ZERO
 var state: State = State.IDLE
 
+var enemy: Enemy
+var enemy_in_range: bool = false
+
+var damage: int = 1
+var max_hp: int = 5
+var hp: int = 1
 
 func _ready() -> void:
 	#active animation tree (animation ko auto run khi edit)
@@ -92,14 +99,36 @@ func char_flip(time):
 	if is_attacking: return
 	if flip_timer > 0: flip_timer -= time
 		
-	if move_direction.x < 0 and not texture_anim.flip_h and flip_timer <= 0:
-		texture_anim.flip_h = true
+	if move_direction.x < 0 and visual.scale.x == 1 and flip_timer <= 0:
+		visual.scale.x = -1
 		flip_timer = flip_delay_time
-	elif move_direction.x > 0 and texture_anim.flip_h and flip_timer <= 0:
-		texture_anim.flip_h = false
+	elif move_direction.x > 0 and visual.scale.x == -1 and flip_timer <= 0:
+		visual.scale.x = 1
 		flip_timer = flip_delay_time
+
+
+func deal_damage():
+	if enemy_in_range and enemy and is_attacking:
+		enemy.take_damage(damage)
+
+
+func take_damage(amount):
+	hp -= amount
+	hp = clamp(hp, 0, max_hp)
+	#print("Player Hp: " + str(hp))
 
 
 func _on_animation_tree_animation_attack_finished(anim_name: StringName) -> void:
 	if anim_name == "attack":
 		is_attacking = false
+
+
+func _on_hitbox_body_entered(body: Node2D) -> void:
+	if body is Enemy:
+		enemy_in_range = true
+		enemy = body as Enemy
+
+
+func _on_hitbox_body_exited(body: Node2D) -> void:
+	if body is Enemy:
+		enemy_in_range = false

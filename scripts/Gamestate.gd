@@ -3,7 +3,8 @@ extends Node
 signal new_skills
 
 var skills = {
-	"jump": true
+	"jump": false,
+	"dash": false
 }
 
 
