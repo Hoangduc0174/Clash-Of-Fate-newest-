@@ -9,7 +9,7 @@ var skills = {
 
 
 func _ready() -> void:
-	pass # Replace with function body.
+	pass
 
 
 func unlock_skill(name: String):

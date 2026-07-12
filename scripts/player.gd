@@ -9,6 +9,7 @@ enum State{
 	JUMP_FALL_BETWEEN,
 	FALL,
 	ATTACK,
+	HURT,
 	DIE
 }
 
@@ -17,12 +18,13 @@ enum State{
 @onready var visual: Node2D = $Visual
 
 
-const SPEED = 160
+const SPEED = 110
 const JUMP = -350
 const GRAVITY = 800
 
 var is_attacking:bool = false
 var can_attack: bool = true
+var is_hurt: bool = false
 var flip_timer:float = 0.0
 var flip_delay_time:float = 0.1
 
@@ -43,25 +45,34 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	char_flip(delta) #xoay
-	jump_and_fall()
 	physics(delta)
+	jump()
 	attack()
-	move_and_slide()
 	update_state()
 	update_animation()
+	move_and_slide()
 
 
 func physics(delta):
 	move_direction.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
 	velocity.x = move_direction.x * SPEED
 	if not is_on_floor(): velocity.y += GRAVITY * delta
+	
+	if is_hurt:
+		velocity.x = 0
+	
+	if is_attacking and is_on_floor():
+		velocity.x = 0
 
 
 func update_state():
+	if is_hurt: 
+		return
 	if is_attacking: return
-	if velocity.y < -0.01: state = State.JUMP
-	elif velocity.y > 0.01: state = State.FALL
-	if is_on_floor():
+	if not is_on_floor():
+		if velocity.y < -0.01: state = State.JUMP
+		elif velocity.y > 0.01: state = State.FALL
+	else:
 		if move_direction.x != 0: state = State.RUN
 		else: state = State.IDLE
 
@@ -73,15 +84,16 @@ func update_animation():
 		State.ATTACK: animation_playback.travel("attack")
 		State.JUMP: animation_playback.travel("jump")
 		State.FALL: animation_playback.travel("fall")
+		State.HURT: animation_playback.travel("hurt")
 		State.TURN_AROUND: animation_playback.travel("turn_around")
 
 
 func attack():
+	if is_hurt:
+		return
 	if is_on_floor(): can_attack = true #on floor danh thoai mai
 	if is_attacking:
-		if is_on_floor(): 
-			velocity.x = 0
-		else:
+		if not is_on_floor():
 			can_attack = false #on air chi cho danh 1 phat
 		return
 	if Input.is_action_just_pressed("attack") and can_attack:
@@ -89,7 +101,7 @@ func attack():
 		state = State.ATTACK
 
 
-func jump_and_fall():
+func jump():
 	if Gamestate.skills["jump"]:
 		if Input.is_action_just_pressed("jump") and is_on_floor():
 				velocity.y = JUMP
@@ -113,14 +125,23 @@ func deal_damage():
 
 
 func take_damage(amount):
+	state = State.HURT
+	is_hurt = true
+	get_viewport().get_camera_2d().shake()
 	hp -= amount
 	hp = clamp(hp, 0, max_hp)
 	#print("Player Hp: " + str(hp))
 
 
+func die():
+	pass
+
+
 func _on_animation_tree_animation_attack_finished(anim_name: StringName) -> void:
 	if anim_name == "attack":
 		is_attacking = false
+	if anim_name == "hurt":
+		is_hurt = false
 
 
 func _on_hitbox_body_entered(body: Node2D) -> void:

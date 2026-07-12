@@ -3,29 +3,13 @@
 [ext_resource type="Script" uid="uid://b4pjphbo7hxfh" path="res://scripts/main.gd" id="1_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://vnhm71kk5i6n" path="res://scenes/player.tscn" id="1_o5qli"]
 [ext_resource type="PackedScene" uid="uid://ucavncrsmoxx" path="res://scenes/ui.tscn" id="2_0wfyh"]
-[ext_resource type="PackedScene" uid="uid://cy62blecu0dto" path="res://scenes/Map_0.tscn" id="2_tbgi4"]
-[ext_resource type="PackedScene" uid="uid://byi4ia4ml41od" path="res://scenes/slime.tscn" id="5_tbgi4"]
-
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_sugp2"]
+[ext_resource type="PackedScene" uid="uid://drd76o4i4kd0s" path="res://scenes/current_map.tscn" id="2_jyhfs"]
 
 [node name="Main" type="Node2D" unique_id=1754386151]
 script = ExtResource("1_jyhfs")
 
-[node name="Map_0" parent="." unique_id=201171101 instance=ExtResource("2_tbgi4")]
-position = Vector2(302, 302)
-
-[node name="Player" parent="." unique_id=1323990448 instance=ExtResource("1_o5qli")]
-position = Vector2(102, 303)
+[node name="Current_map" parent="." unique_id=226837386 instance=ExtResource("2_jyhfs")]
 
 [node name="Ui" parent="." unique_id=2025830709 instance=ExtResource("2_0wfyh")]
 
-[node name="limit_left" type="StaticBody2D" parent="." unique_id=811058032]
-position = Vector2(-50, 257)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="limit_left" unique_id=1645257701]
-rotation = 1.5707964
-shape = SubResource("WorldBoundaryShape2D_sugp2")
-metadata/_edit_lock_ = true
-
-[node name="slime" parent="." unique_id=1735098041 instance=ExtResource("5_tbgi4")]
-position = Vector2(500, 303)
+[node name="Player" parent="." unique_id=1323990448 instance=ExtResource("1_o5qli")]

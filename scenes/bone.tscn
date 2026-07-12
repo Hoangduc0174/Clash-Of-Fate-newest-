@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://cnttxpokeur6t"]
+
+[ext_resource type="Script" uid="uid://db6xsytf55ycm" path="res://scripts/bone.gd" id="1_f60gj"]
+[ext_resource type="Texture2D" uid="uid://buiapmfdw5xr6" path="res://assets/Enemies/Ghoul/spritesheets/bone.png" id="1_mm6ww"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f60gj"]
+atlas = ExtResource("1_mm6ww")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kq1tw"]
+atlas = ExtResource("1_mm6ww")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_74jvl"]
+atlas = ExtResource("1_mm6ww")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oc00q"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f60gj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kq1tw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_74jvl")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mm6ww"]
+radius = 8.062258
+
+[node name="Bone" type="Area2D" unique_id=1541588859]
+script = ExtResource("1_f60gj")
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=148395841]
+sprite_frames = SubResource("SpriteFrames_oc00q")
+autoplay = "default"
+frame = 2
+frame_progress = 0.50172514
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=570555910]
+shape = SubResource("CircleShape2D_mm6ww")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
