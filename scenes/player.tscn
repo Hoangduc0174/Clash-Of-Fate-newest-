@@ -547,7 +547,7 @@ height = 32.0
 script = ExtResource("1_qhqgy")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1827780710]
-position = Vector2(70, -10)
+position = Vector2(70, -30)
 zoom = Vector2(3, 3)
 limit_left = 0
 limit_smoothed = true

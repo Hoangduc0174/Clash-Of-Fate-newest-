@@ -2,8 +2,12 @@ extends Enemy
 class_name Slime
 
 
-const SPEED = 30
-const GRAVITY = 700
+@export var SPEED = 30
+@export var GRAVITY = 700
+@export var HP = 2
+@export var MAX_HP = 2
+@export var DAMAGE = 1
+
 
 func _physics_process(delta: float) -> void:
 	physics(delta)
@@ -16,15 +20,14 @@ func _physics_process(delta: float) -> void:
 func _ready() -> void:
 	set_up_shader()
 	set_up_patrol()
-	damage = 1
-	max_hp = 2
-	hp = 2
+	damage = DAMAGE
+	max_hp = MAX_HP
+	hp = HP
 	player_in_range = false
 	speed = SPEED
 	gravity = GRAVITY
 	
 	animation_tree.set_active(true)
-	visual.scale.x = -1
 
 
 

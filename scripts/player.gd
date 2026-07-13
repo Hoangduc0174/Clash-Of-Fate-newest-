@@ -30,7 +30,7 @@ var flip_timer:float = 0.0
 var flip_delay_time:float = 0.1
 var coyote_time := 0.1
 var coyote_timer := 0.0
-var jump_buffer_time := 0.3
+var jump_buffer_time := 0.2
 var jump_buffer_timer := 0.0
 
 var move_direction: Vector2 = Vector2.ZERO
@@ -148,7 +148,7 @@ func char_flip(time):
 
 func deal_damage():
 	if enemy_in_range and enemy and is_attacking:
-		enemy.take_damage(damage)
+		enemy.take_damage(damage, global_position.x)
 
 
 func take_damage(amount):

@@ -7,6 +7,7 @@ enum State{
 	IDLE,
 	RUN,
 	ATTACK,
+	HURT,
 	DIE
 }
 
@@ -15,8 +16,7 @@ enum State{
 @onready var visual: Node2D = $Visual
 @onready var collision: CollisionShape2D = $CollisionShape2D
 @onready var sprite: Sprite2D = $Visual/Sprite2D
-#@onready var player_position = Player.global_position
-var self_position = self.global_position
+
 
 @export var patrol_distance := 20.0
 var start_x: float
@@ -35,7 +35,7 @@ var state:State = State.IDLE
 var is_attacking: bool = false
 var is_flashing: bool = false
 var is_dead: bool = false
-var is_knock_back: bool = false
+var is_hurt: bool = false
 
 
 
@@ -48,7 +48,7 @@ func set_up_shader():
 func physics(delta):
 	if is_dead:
 		return
-	if is_knock_back:
+	if is_hurt:
 		return
 	if visual.scale.x == 1: velocity.x = speed
 	elif visual.scale.x == -1: velocity.x = -speed
@@ -58,7 +58,7 @@ func physics(delta):
 
 func update_state():
 	if is_dead: return
-	if is_knock_back: return
+	if is_hurt: return
 	if is_attacking: 
 		velocity.x = 0
 		return
@@ -73,6 +73,7 @@ func update_animation():
 		State.RUN: animation_playback.travel("run")
 		State.ATTACK: animation_playback.travel("attack")
 		State.DIE: animation_playback.travel("die")
+		State.HURT: animation_playback.travel("hurt")
 
 
 func attack():
@@ -96,8 +97,11 @@ func die():
 	is_dead = true
 
 
-func take_damage(amount):
+func take_damage(amount, player_position):
 	if is_dead:
+		return
+	
+	if is_hurt:
 		return
 	
 	get_viewport().get_camera_2d().shake(2.5, 0.5)
@@ -109,16 +113,40 @@ func take_damage(amount):
 		die()
 		return
 		
-	knock_back()
+	knock_back(player_position)
 
 
-func knock_back():
-	is_knock_back = true
-	state = State.IDLE
-	velocity.x = -visual.scale.x * 250
-	flash()
+func knock_back(player_position):
+	is_attacking = false
+	is_hurt = true
+	state = State.HURT
+
+	var dir = sign(global_position.x - player_position)
+	velocity.x = dir * 100
+
+	await flash()
 	await get_tree().create_timer(0.15).timeout
-	is_knock_back = false
+	is_hurt = false
+	if player_in_range:
+		attack()
+
+
+func can_see_player() -> bool:
+	if player == null:
+		return false
+
+	var space = get_world_2d().direct_space_state
+
+	var query = PhysicsRayQueryParameters2D.create(
+		global_position,
+		player.global_position
+	)
+
+	query.exclude = [self]
+
+	var result = space.intersect_ray(query)
+
+	return result and result.collider == player
 
 
 func set_up_patrol():
@@ -126,7 +154,7 @@ func set_up_patrol():
 
 
 func patrol():
-	if is_dead or is_knock_back or is_attacking:
+	if is_dead or is_hurt or is_attacking:
 		return
 
 	if global_position.x >= start_x + patrol_distance:

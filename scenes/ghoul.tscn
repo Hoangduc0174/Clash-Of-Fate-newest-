@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://durhb8eyplyj5" path="res://assets/Enemies/Ghoul/spritesheets/walk.png" id="3_0rs5k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jdvld"]
-size = Vector2(191, 17)
+size = Vector2(173, 17)
 
 [sub_resource type="Animation" id="Animation_ei4jr"]
 length = 0.001
@@ -182,6 +182,59 @@ tracks/3/keys = {
 "values": [1]
 }
 
+[sub_resource type="Animation" id="Animation_waqgy"]
+resource_name = "hurt"
+length = 0.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_ei4jr")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:hframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [7]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Sprite2D:vframes")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
 [sub_resource type="Animation" id="Animation_fxkcu"]
 resource_name = "idle"
 loop_mode = 1
@@ -294,6 +347,7 @@ _data = {
 &"RESET": SubResource("Animation_ei4jr"),
 &"attack": SubResource("Animation_v81jn"),
 &"die": SubResource("Animation_0rs5k"),
+&"hurt": SubResource("Animation_waqgy"),
 &"idle": SubResource("Animation_fxkcu"),
 &"run": SubResource("Animation_bwnnb")
 }
@@ -303,6 +357,9 @@ animation = &"attack"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fxkcu"]
 animation = &"die"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f26u8"]
+animation = &"hurt"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ei4jr"]
 animation = &"idle"
@@ -327,17 +384,25 @@ advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_j1tky"]
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sw4uv"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_neu6l"]
+switch_mode = 2
+advance_mode = 2
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_v81jn"]
 states/Start/position = Vector2(154.17764, 94.6612)
 states/attack/node = SubResource("AnimationNodeAnimation_v81jn")
 states/attack/position = Vector2(316.82202, -19.609863)
 states/die/node = SubResource("AnimationNodeAnimation_fxkcu")
 states/die/position = Vector2(449, 94.80467)
+states/hurt/node = SubResource("AnimationNodeAnimation_f26u8")
+states/hurt/position = Vector2(507.35373, 8.430252)
 states/idle/node = SubResource("AnimationNodeAnimation_ei4jr")
 states/idle/position = Vector2(317.88892, 94.222244)
 states/run/node = SubResource("AnimationNodeAnimation_waqgy")
 states/run/position = Vector2(316.95325, 212.80966)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_fxkcu"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_0rs5k"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_bwnnb"), "idle", "die", SubResource("AnimationNodeStateMachineTransition_waqgy"), "attack", "die", SubResource("AnimationNodeStateMachineTransition_ei4jr"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_f26u8"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_j1tky")]
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_fxkcu"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_0rs5k"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_bwnnb"), "idle", "die", SubResource("AnimationNodeStateMachineTransition_waqgy"), "attack", "die", SubResource("AnimationNodeStateMachineTransition_ei4jr"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_f26u8"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_j1tky"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_sw4uv"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_neu6l")]
 graph_offset = Vector2(-46.646282, -32.458633)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0rs5k"]
@@ -354,12 +419,13 @@ metadata/_edit_lock_ = true
 texture = ExtResource("3_0rs5k")
 offset = Vector2(0, -8)
 hframes = 6
+frame = 1
 metadata/_edit_lock_ = true
 
 [node name="detect_area" type="Area2D" parent="Visual" unique_id=1889511572]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Visual/detect_area" unique_id=180329450]
-position = Vector2(95.5, -8.5)
+position = Vector2(86.5, -8.5)
 shape = SubResource("RectangleShape2D_jdvld")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=1758742107]

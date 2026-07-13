@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var slime: Node2D = $slime
+@onready var slime: Node2D = $Monster/slime
 var unlocked: bool = false
 
 

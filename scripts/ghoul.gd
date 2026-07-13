@@ -19,7 +19,6 @@ func _ready() -> void:
 	gravity = GRAVITY
 	
 	animation_tree.set_active(true)
-	visual.scale.x = -1
 
 
 
