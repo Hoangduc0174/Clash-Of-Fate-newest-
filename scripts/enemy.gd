@@ -14,6 +14,14 @@ enum State{
 @onready var animation_playback: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 @onready var visual: Node2D = $Visual
 @onready var collision: CollisionShape2D = $CollisionShape2D
+@onready var sprite: Sprite2D = $Visual/Sprite2D
+#@onready var player_position = Player.global_position
+var self_position = self.global_position
+
+@export var patrol_distance := 20.0
+var start_x: float
+
+const FLASH_SHADER = preload("res://scripts/flash.gdshader")
 
 var player_in_range: bool = false
 var player: Player = null
@@ -28,6 +36,13 @@ var is_attacking: bool = false
 var is_flashing: bool = false
 var is_dead: bool = false
 var is_knock_back: bool = false
+
+
+
+func set_up_shader():
+	var mat := ShaderMaterial.new()
+	mat.shader = FLASH_SHADER
+	sprite.material = mat
 
 
 func physics(delta):
@@ -85,29 +100,53 @@ func take_damage(amount):
 	if is_dead:
 		return
 	
+	get_viewport().get_camera_2d().shake(2.5, 0.5)
 	hp -= amount
 	hp = clamp(hp, 0, max_hp)
-	print("Enemy Hp: " + str(hp))
 	
 	if hp <= 0:
+		await flash()
 		die()
 		return
 		
+	knock_back()
+
+
+func knock_back():
 	is_knock_back = true
 	state = State.IDLE
-	velocity.x = -visual.scale.x * 200
+	velocity.x = -visual.scale.x * 250
 	flash()
 	await get_tree().create_timer(0.15).timeout
 	is_knock_back = false
 
 
+func set_up_patrol():
+	start_x = global_position.x
+
+
+func patrol():
+	if is_dead or is_knock_back or is_attacking:
+		return
+
+	if global_position.x >= start_x + patrol_distance:
+		visual.scale.x = -1
+
+	elif global_position.x <= start_x - patrol_distance:
+		visual.scale.x = 1
+
+
 func flash():
 	if is_flashing:
 		return
-		
+
 	is_flashing = true
-	
-	visual.modulate = Color(1, 1, 1, 0.3)
-	await get_tree().create_timer(0.08).timeout
-	visual.modulate = Color.WHITE
+
+	var mat := sprite.material as ShaderMaterial
+
+	mat.set_shader_parameter("flash_amount", 1.0)
+	await get_tree().create_timer(0.1).timeout
+	mat.set_shader_parameter("flash_amount", 0)
+
+
 	is_flashing = false

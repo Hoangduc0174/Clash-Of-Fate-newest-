@@ -5,9 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://cnttxpokeur6t" path="res://scenes/bone.tscn" id="2_fxkcu"]
 [ext_resource type="Texture2D" uid="uid://bvplacllo0pev" path="res://assets/Enemies/Ghoul/spritesheets/attack.png" id="2_jdvld"]
 [ext_resource type="Texture2D" uid="uid://ctmn1yp0un1fk" path="res://assets/Enemies/Ghoul/spritesheets/idle.png" id="2_v81jn"]
+[ext_resource type="Texture2D" uid="uid://durhb8eyplyj5" path="res://assets/Enemies/Ghoul/spritesheets/walk.png" id="3_0rs5k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jdvld"]
-size = Vector2(191, 145)
+size = Vector2(191, 17)
 
 [sub_resource type="Animation" id="Animation_ei4jr"]
 length = 0.001
@@ -234,12 +235,67 @@ tracks/3/keys = {
 "values": [1]
 }
 
+[sub_resource type="Animation" id="Animation_bwnnb"]
+resource_name = "run"
+length = 0.6
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [6]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:vframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Sprite2D:texture")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("3_0rs5k")]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0rs5k"]
 _data = {
 &"RESET": SubResource("Animation_ei4jr"),
 &"attack": SubResource("Animation_v81jn"),
 &"die": SubResource("Animation_0rs5k"),
-&"idle": SubResource("Animation_fxkcu")
+&"idle": SubResource("Animation_fxkcu"),
+&"run": SubResource("Animation_bwnnb")
 }
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_v81jn"]
@@ -250,6 +306,9 @@ animation = &"die"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ei4jr"]
 animation = &"idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_waqgy"]
+animation = &"run"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fxkcu"]
 advance_mode = 2
@@ -264,35 +323,43 @@ advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ei4jr"]
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_f26u8"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_j1tky"]
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_v81jn"]
 states/Start/position = Vector2(154.17764, 94.6612)
 states/attack/node = SubResource("AnimationNodeAnimation_v81jn")
-states/attack/position = Vector2(466.0959, 94.27903)
+states/attack/position = Vector2(316.82202, -19.609863)
 states/die/node = SubResource("AnimationNodeAnimation_fxkcu")
-states/die/position = Vector2(316.22223, 206.99998)
+states/die/position = Vector2(449, 94.80467)
 states/idle/node = SubResource("AnimationNodeAnimation_ei4jr")
 states/idle/position = Vector2(317.88892, 94.222244)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_fxkcu"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_0rs5k"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_bwnnb"), "idle", "die", SubResource("AnimationNodeStateMachineTransition_waqgy"), "attack", "die", SubResource("AnimationNodeStateMachineTransition_ei4jr")]
+states/run/node = SubResource("AnimationNodeAnimation_waqgy")
+states/run/position = Vector2(316.95325, 212.80966)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_fxkcu"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_0rs5k"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_bwnnb"), "idle", "die", SubResource("AnimationNodeStateMachineTransition_waqgy"), "attack", "die", SubResource("AnimationNodeStateMachineTransition_ei4jr"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_f26u8"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_j1tky")]
+graph_offset = Vector2(-46.646282, -32.458633)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_j1tky"]
-radius = 8.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0rs5k"]
+size = Vector2(14, 16)
 
 [node name="ghoul" type="CharacterBody2D" unique_id=1317285025]
 script = ExtResource("1_jdvld")
 bone_scene = ExtResource("2_fxkcu")
 
 [node name="Visual" type="Node2D" parent="." unique_id=368233651]
+metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Visual" unique_id=48719338]
-texture = ExtResource("2_jdvld")
+texture = ExtResource("3_0rs5k")
 offset = Vector2(0, -8)
-hframes = 10
-frame = 9
+hframes = 6
+metadata/_edit_lock_ = true
 
 [node name="detect_area" type="Area2D" parent="Visual" unique_id=1889511572]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Visual/detect_area" unique_id=180329450]
-position = Vector2(95.5, -72.5)
+position = Vector2(95.5, -8.5)
 shape = SubResource("RectangleShape2D_jdvld")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=1758742107]
@@ -305,12 +372,11 @@ tree_root = SubResource("AnimationNodeStateMachine_v81jn")
 anim_player = NodePath("../AnimationPlayer")
 
 [node name="Marker2D" type="Marker2D" parent="Visual" unique_id=1198824622]
-position = Vector2(25, -12)
+position = Vector2(10, -15)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=192178935]
-position = Vector2(0, -8)
-shape = SubResource("CircleShape2D_j1tky")
-metadata/_edit_lock_ = true
+position = Vector2(1, -8)
+shape = SubResource("RectangleShape2D_0rs5k")
 
 [connection signal="body_entered" from="Visual/detect_area" to="." method="_on_detect_area_body_entered"]
 [connection signal="body_exited" from="Visual/detect_area" to="." method="_on_detect_area_body_exited"]

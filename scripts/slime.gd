@@ -7,12 +7,15 @@ const GRAVITY = 700
 
 func _physics_process(delta: float) -> void:
 	physics(delta)
+	patrol()
 	update_state()
 	update_animation() 
 	move_and_slide()
 
 
 func _ready() -> void:
+	set_up_shader()
+	set_up_patrol()
 	damage = 1
 	max_hp = 2
 	hp = 2

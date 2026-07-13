@@ -1,0 +1,12 @@
+shader_type canvas_item;
+
+uniform float flash_amount = 0.0;
+
+void fragment() {
+	vec4 tex = texture(TEXTURE, UV);
+
+	COLOR = vec4(
+		mix(tex.rgb, vec3(3.0), flash_amount),
+		tex.a
+	);
+}

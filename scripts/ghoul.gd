@@ -9,9 +9,11 @@ const GRAVITY = 700
 
 
 func _ready() -> void:
+	set_up_shader()
+	set_up_patrol()
 	damage = 1
-	max_hp = 1
-	hp = 1
+	max_hp = 2
+	hp = 2
 	player_in_range = false
 	speed = SPEED
 	gravity = GRAVITY
@@ -23,7 +25,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	physics(delta)
-	velocity.x = 0
+	patrol()
 	update_state()
 	update_animation()
 	move_and_slide()
