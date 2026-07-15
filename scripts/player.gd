@@ -9,6 +9,7 @@ enum State{
 	JUMP_FALL_BETWEEN,
 	FALL,
 	ATTACK,
+	ATTACK_COMBO,
 	HURT,
 	DIE
 }
@@ -16,15 +17,17 @@ enum State{
 @onready var animation_tree: AnimationTree = $Visual/AnimationTree
 @onready var animation_playback: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 @onready var visual: Node2D = $Visual
+@onready var camera: Camera2D = $Camera2D
 
 
-const SPEED = 130
-const JUMP = -360
-const GRAVITY = 800
-
+const SPEED = 140
+const JUMP = -340
+const GRAVITY = 650
+const MAX_FALL_SPEED = 320
 var is_attacking:bool = false
 var can_attack: bool = true
 var is_hurt: bool = false
+var attack_count: int = 0
 
 var flip_timer:float = 0.0
 var flip_delay_time:float = 0.1
@@ -36,7 +39,7 @@ var jump_buffer_timer := 0.0
 var move_direction: Vector2 = Vector2.ZERO
 var state: State = State.IDLE
 
-var enemy: Enemy
+var enemies: Array = []
 var enemy_in_range: bool = false
 
 var damage: int = 1
@@ -46,6 +49,7 @@ var hp: int = 1
 func _ready() -> void:
 	#active animation tree (animation ko auto run khi edit)
 	animation_tree.set_active(true)
+	add_to_group("player")
 
 
 func _physics_process(delta: float) -> void:
@@ -62,15 +66,16 @@ func _physics_process(delta: float) -> void:
 func physics(delta):
 	move_direction.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
 	velocity.x = move_direction.x * SPEED
-	
+
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
+		velocity.y = min(velocity.y, MAX_FALL_SPEED)
 	
 	if is_hurt:
 		velocity.x = 0
 	
-	if is_attacking and is_on_floor():
-		velocity.x = 0
+	if is_attacking and is_on_floor() and is_attacking:
+		velocity.x = sign(visual.scale.x) * 50.0
 
 
 func update_state():
@@ -94,6 +99,7 @@ func update_animation():
 		State.FALL: animation_playback.travel("fall")
 		State.HURT: animation_playback.travel("hurt")
 		State.TURN_AROUND: animation_playback.travel("turn_around")
+		State.ATTACK_COMBO: animation_playback.travel("attack_combo")
 
 
 func attack():
@@ -101,12 +107,11 @@ func attack():
 		return
 	if is_on_floor(): can_attack = true #on floor danh thoai mai
 	if is_attacking:
-		if not is_on_floor():
-			can_attack = false #on air chi cho danh 1 phat
 		return
 	if Input.is_action_just_pressed("attack") and can_attack:
-		is_attacking = true
 		state = State.ATTACK
+		attack_count += 1
+		is_attacking = true
 
 
 func buffer_jump_and_coyote_time(delta):
@@ -121,7 +126,7 @@ func buffer_jump_and_coyote_time(delta):
 	jump_buffer_timer = max(jump_buffer_timer - delta, 0.0)
 
 	if Input.is_action_just_released("jump") and velocity.y < 0:
-		velocity.y *= 0.7
+		velocity.y *= 0.6
 
 
 func jump():
@@ -147,14 +152,15 @@ func char_flip(time):
 
 
 func deal_damage():
-	if enemy_in_range and enemy and is_attacking:
-		enemy.take_damage(damage, global_position.x)
+	for enemy in enemies:
+		if enemy_in_range and is_instance_valid(enemy) and is_attacking:
+			enemy.take_damage(damage, global_position.x)
 
 
 func take_damage(amount):
 	state = State.HURT
 	is_hurt = true
-	get_viewport().get_camera_2d().shake()
+	camera.shake(3.5,1.0)
 	hp -= amount
 	hp = clamp(hp, 0, max_hp)
 
@@ -165,7 +171,16 @@ func die():
 
 func _on_animation_tree_animation_attack_finished(anim_name: StringName) -> void:
 	if anim_name == "attack":
+		if not is_on_floor():
+			can_attack = false
+		if attack_count > 1:
+			state = State.ATTACK_COMBO
+		else:
+			is_attacking = false
+
+	if anim_name == "attack_combo":
 		is_attacking = false
+		attack_count = 0
 	if anim_name == "hurt":
 		is_hurt = false
 
@@ -173,9 +188,10 @@ func _on_animation_tree_animation_attack_finished(anim_name: StringName) -> void
 func _on_hitbox_body_entered(body: Node2D) -> void:
 	if body is Enemy:
 		enemy_in_range = true
-		enemy = body as Enemy
+		enemies.append(body)
 
 
 func _on_hitbox_body_exited(body: Node2D) -> void:
 	if body is Enemy:
-		enemy_in_range = false
+		enemies.erase(body)
+		enemy_in_range = enemies.size() > 0

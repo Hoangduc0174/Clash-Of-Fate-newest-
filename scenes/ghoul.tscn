@@ -423,6 +423,7 @@ frame = 1
 metadata/_edit_lock_ = true
 
 [node name="detect_area" type="Area2D" parent="Visual" unique_id=1889511572]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Visual/detect_area" unique_id=180329450]
 position = Vector2(86.5, -8.5)
@@ -438,9 +439,11 @@ tree_root = SubResource("AnimationNodeStateMachine_v81jn")
 anim_player = NodePath("../AnimationPlayer")
 
 [node name="Marker2D" type="Marker2D" parent="Visual" unique_id=1198824622]
+visible = false
 position = Vector2(10, -15)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=192178935]
+visible = false
 position = Vector2(1, -8)
 shape = SubResource("RectangleShape2D_0rs5k")
 

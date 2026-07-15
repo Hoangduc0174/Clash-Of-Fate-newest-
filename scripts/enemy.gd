@@ -104,7 +104,7 @@ func take_damage(amount, player_position):
 	if is_hurt:
 		return
 	
-	get_viewport().get_camera_2d().shake(2.5, 0.5)
+	get_viewport().get_camera_2d().shake(3.5, 1.0)
 	hp -= amount
 	hp = clamp(hp, 0, max_hp)
 	
@@ -122,7 +122,7 @@ func knock_back(player_position):
 	state = State.HURT
 
 	var dir = sign(global_position.x - player_position)
-	velocity.x = dir * 100
+	velocity.x = dir * 50
 
 	await flash()
 	await get_tree().create_timer(0.15).timeout

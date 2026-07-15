@@ -10,6 +10,6 @@ script = ExtResource("1_jyhfs")
 
 [node name="Current_map" parent="." unique_id=226837386 instance=ExtResource("2_jyhfs")]
 
-[node name="Ui" parent="." unique_id=2025830709 instance=ExtResource("2_0wfyh")]
-
 [node name="Player" parent="." unique_id=1323990448 instance=ExtResource("1_o5qli")]
+
+[node name="Ui" parent="." unique_id=2025830709 instance=ExtResource("2_0wfyh")]
